@@ -8,6 +8,8 @@ __email__ = "kgiessel@highline.edu"
 
 import boto3
 import configparser
+import string
+import random
 config = configparser.ConfigParser()
 config.read('config.ini')
 
@@ -53,6 +55,9 @@ else:
 
 #functions
 
+def passwd_generator(size=10, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
+    return ''.join(random.choice(chars) for x in range(size))
+
 def create_tags(resource, team_name, event):
     tag = resource.create_tags(Tags=[{'Key': 'Name', 'Value': '%s' % (team_name)}])
     tag = resource.create_tags(Tags=[{'Key': 'Team', 'Value': '%s' % (team_name)}])
@@ -88,11 +93,12 @@ def create_vpc(team_number, team_name, subnet_cidr, ip_count, event, aws_region)
     return vpc
 
 def create_directory(team_name, vpc, workspaces1_id, workspaces2_id):
-    workspaces = boto3.client('ds')
-    directory = workspaces.create_directory(
+    directory_passwd = passwd_generator()
+    client = boto3.client('ds')
+    directory = client.create_directory(
         Name='ws.%s.%s' % (team_name, domain),
         ShortName='%s' % (team_name),
-        Password='TempPass123',
+        Password='%s' % (directory_passwd),
         Description='%s' % (team_name),
         Size='Small',
         VpcSettings={
@@ -103,6 +109,8 @@ def create_directory(team_name, vpc, workspaces1_id, workspaces2_id):
             ]
         }
     )
+    print('Creating Workspaces Directory ws.%.% - %' % (team_name, domain, directory))
+    print('...with password = %s' % (directory_passwd))
 
 def create_team(team_number, team_name, subnet_cidr, ip_count, event, aws_region):
     vpc = create_vpc(team_number, team_name, subnet_cidr, ip_count, event, aws_region)
@@ -115,13 +123,14 @@ def create_team(team_number, team_name, subnet_cidr, ip_count, event, aws_region
 
     #create workspaces subnet if used
     if workspaces == "true":
-        create_subnet(vpc, team_number, team_name, last_octet, subnet_cidr, 'Workspaces1', event, aws_region, 'a')
+        subnet = create_subnet(vpc, team_number, team_name, last_octet, subnet_cidr, 'Workspaces1', event, aws_region, 'a')
         workspaces1_id = subnet.id
-        print('Workspaces1 ID = %s' % (workspaces1_id))
         last_octet += ip_count
-        create_subnet(vpc, team_number, team_name, last_octet, subnet_cidr, 'Workspaces2', event, aws_region, 'b')
+        subnet = create_subnet(vpc, team_number, team_name, last_octet, subnet_cidr, 'Workspaces2', event, aws_region, 'b')
         workspaces2_id = subnet.id
         last_octet += ip_count
+        directory = create_directory(team_name, vpc, workspaces1_id, workspaces2_id)
+
 
     #create subnets
     subnet_name_array = (config.items('SUBNETS'))
