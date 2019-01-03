@@ -1,4 +1,4 @@
-"""test-vpc.py"""
+"""create-vpc.py"""
 
 __author__ = "Kurt Giessel"
 __copyright__ = "Copyright 2018, Highline College"
@@ -84,6 +84,11 @@ def create_vpc(team_number, team_name, subnet_cidr, ip_count, event, aws_region)
     create_tags(ig, team_name, event)
     print('Created Internet Gateway %s - %s' % (team_name, ig.id))
 
+    return vpc
+
+def create_team(team_number, team_name, subnet_cidr, ip_count, event, aws_region):
+    vpc = create_vpc(team_number, team_name, subnet_cidr, ip_count, event, aws_region)
+
     last_octet = 0
     #create router subnet if used
     if router == "true":
@@ -104,13 +109,7 @@ def create_vpc(team_number, team_name, subnet_cidr, ip_count, event, aws_region)
         create_subnet(vpc, team_number, team_name, last_octet, subnet_cidr, subnet_name, event, aws_region, 'a')
         last_octet += ip_count
 
-
-def create_team(team_number, team_name, subnet_cidr, ip_count, event, aws_region):
-    create_vpc(team_number, team_name, subnet_cidr, ip_count, event, aws_region)
-
-
-
-
+#main
 
 
 create_team(team_number, team_name, subnet_cidr, ip_count, event, aws_region)
