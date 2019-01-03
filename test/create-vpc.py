@@ -15,6 +15,7 @@ config.read('config.ini')
 
 event = (config['EVENT']['name'])
 aws_region =  (config['AWS']['region'])
+domain = (config['TEAMS']['domain'])
 num_teams = (config['TEAMS']['count'])
 name_teams = (config['TEAMS']['name'])
 subnet_name_array = (config.items('SUBNETS'))
@@ -63,12 +64,12 @@ def create_tags_subnet(subnet, team_name, subnet_name, event):
     tag = subnet.create_tags(Tags=[{'Key': 'Team', 'Value': '%s' % (team_name)}])
     tag = subnet.create_tags(Tags=[{'Key': 'Event', 'Value': '%s' % (event)}])
 
-
 def create_subnet(vpc, team_number, team_name, last_octet, subnet_cidr, subnet_name, event, aws_region, avb_zone):
     subnet = vpc.create_subnet(CidrBlock='10.0.%s.%s/%s' % (team_number, last_octet, subnet_cidr), AvailabilityZone='%s%s' % (aws_region, avb_zone))
     create_tags_subnet(subnet, team_name, subnet_name, event)
     print('Created Subnet %s-%s - %s' % (team_name, subnet_name, subnet.id))
 
+    return subnet
 
 def create_vpc(team_number, team_name, subnet_cidr, ip_count, event, aws_region):
     #create vpc
@@ -86,6 +87,23 @@ def create_vpc(team_number, team_name, subnet_cidr, ip_count, event, aws_region)
 
     return vpc
 
+def create_directory(team_name, vpc, workspaces1_id, workspaces2_id):
+    workspaces = boto3.client('ds')
+    directory = workspaces.create_directory(
+        Name='ws.%s.%s' % (team_name, domain),
+        ShortName='%s' % (team_name),
+        Password='TempPass123',
+        Description='%s' % (team_name),
+        Size='Small',
+        VpcSettings={
+            'VpcId': '%s' % (vpc.id),
+            'SubnetIds': [
+                '%s' % (workspaces1_id),
+                '%s' % (workspaces2_id),
+            ]
+        }
+    )
+
 def create_team(team_number, team_name, subnet_cidr, ip_count, event, aws_region):
     vpc = create_vpc(team_number, team_name, subnet_cidr, ip_count, event, aws_region)
 
@@ -98,8 +116,11 @@ def create_team(team_number, team_name, subnet_cidr, ip_count, event, aws_region
     #create workspaces subnet if used
     if workspaces == "true":
         create_subnet(vpc, team_number, team_name, last_octet, subnet_cidr, 'Workspaces1', event, aws_region, 'a')
+        workspaces1_id = subnet.id
+        print('Workspaces1 ID = %s' % (workspaces1_id))
         last_octet += ip_count
         create_subnet(vpc, team_number, team_name, last_octet, subnet_cidr, 'Workspaces2', event, aws_region, 'b')
+        workspaces2_id = subnet.id
         last_octet += ip_count
 
     #create subnets
