@@ -10,6 +10,7 @@ import boto3
 import configparser
 import string
 import random
+import os
 config = configparser.ConfigParser()
 config.read('config.ini')
 
@@ -17,6 +18,7 @@ config.read('config.ini')
 
 event = (config['EVENT']['name'])
 aws_region =  (config['AWS']['region'])
+interwebs_id = (config['AWS']['interwebs_id'])
 domain = (config['TEAMS']['domain'])
 num_teams = (config['TEAMS']['count'])
 name_teams = (config['TEAMS']['name'])
@@ -55,8 +57,11 @@ else:
 
 #functions
 
-def passwd_generator(size=10, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
-    return ''.join(random.choice(chars) for x in range(size))
+def passwd_generator(size=10, chars=string.ascii_letters + string.digits):
+    first = random.choice(string.ascii_uppercase)
+    last = random.choice(string.digits)
+    middle = ''.join(random.choice(chars) for x in range(size))
+    return first + middle + last
 
 def create_tags(resource, team_name, event):
     tag = resource.create_tags(Tags=[{'Key': 'Name', 'Value': '%s' % (team_name)}])
@@ -92,6 +97,16 @@ def create_vpc(team_number, team_name, subnet_cidr, ip_count, event, aws_region)
 
     return vpc
 
+def create_vpc_peering(vpc, interwebs_id, aws_region, team_name, event):
+    ec2 = boto3.resource('ec2')
+    vpc_peering_request = vpc.request_vpc_peering_connection(
+        PeerVpcId='%s' % (interwebs_id)
+    )
+    accept_peering_connection = ec2.VpcPeeringConnection('interwebs_id')
+    vpc_peering_request.accept()
+    os.system('aws ec2 create-tags --region %s --resources %s --tags Key=Name,Value="%s" Key=Team,Value="%s" Key=Event,Value="%s"' % (aws_region, vpc_peering_request.id, team_name, team_name, event))
+    print('Creating VPC Peering - %s' % (vpc_peering_request.id))
+
 def create_directory(team_name, vpc, workspaces1_id, workspaces2_id):
     directory_passwd = passwd_generator()
     client = boto3.client('ds')
@@ -109,11 +124,16 @@ def create_directory(team_name, vpc, workspaces1_id, workspaces2_id):
             ]
         }
     )
-    print('Creating Workspaces Directory ws.%.% - %' % (team_name, domain, directory))
+
+    print('Creating Workspaces Directory ws.%s.%s - %s' % (team_name, domain, directory["DirectoryId"]))
     print('...with password = %s' % (directory_passwd))
+
+    return directory
 
 def create_team(team_number, team_name, subnet_cidr, ip_count, event, aws_region):
     vpc = create_vpc(team_number, team_name, subnet_cidr, ip_count, event, aws_region)
+
+    create_vpc_peering(vpc, interwebs_id, aws_region, team_name, event)
 
     last_octet = 0
     #create router subnet if used
@@ -121,7 +141,7 @@ def create_team(team_number, team_name, subnet_cidr, ip_count, event, aws_region
         create_subnet(vpc, team_number, team_name, last_octet, subnet_cidr, 'Router', event, aws_region, 'a')
         last_octet += ip_count
 
-    #create workspaces subnet if used
+    #create workspaces subnet and directory if used
     if workspaces == "true":
         subnet = create_subnet(vpc, team_number, team_name, last_octet, subnet_cidr, 'Workspaces1', event, aws_region, 'a')
         workspaces1_id = subnet.id
@@ -129,7 +149,7 @@ def create_team(team_number, team_name, subnet_cidr, ip_count, event, aws_region
         subnet = create_subnet(vpc, team_number, team_name, last_octet, subnet_cidr, 'Workspaces2', event, aws_region, 'b')
         workspaces2_id = subnet.id
         last_octet += ip_count
-        directory = create_directory(team_name, vpc, workspaces1_id, workspaces2_id)
+        #create_directory(team_name, vpc, workspaces1_id, workspaces2_id)
 
 
     #create subnets
@@ -141,5 +161,10 @@ def create_team(team_number, team_name, subnet_cidr, ip_count, event, aws_region
 
 #main
 
-
+print('################')
+print('Creating %s' % (team_name))
+print('')
 create_team(team_number, team_name, subnet_cidr, ip_count, event, aws_region)
+print('')
+print('%s Successfully Created!' % (team_name))
+print('')
