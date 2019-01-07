@@ -11,6 +11,7 @@ import configparser
 import string
 import random
 import os
+import json
 config = configparser.ConfigParser()
 config.read('config.ini')
 
@@ -189,44 +190,56 @@ def create_directory(team_name, vpc, workspaces1_id, workspaces2_id):
 
     return directory
 
+
 def get_instance_config(vpc, team_number, team_name):
     #create instance for team_name
     instance_array = (config.items('INSTANCES'))
     #for each subnet in config.ini [INSTANCES]
     for i in range(len(instance_array)):
         instance = (json.loads(instance_array[i][1]))
-        
+        filters = [{'Name':'tag:Name', 'Values':['%s-%s' % (team_name, instance['subnet'])]}]
+        subnet_id = list(ec2.subnets.filter(Filters=filters))
+        for t in subnet_id:
+            subnet_id = t.subnet_id
+        create_instance(team_name, team_number, subnet_id, instance)
+
+
+def create_instance(team_name, team_number, subnet_id, instance):
+    print('Creating Instance %s' % (instance['name']))
+    print('\ton subnet %s-%s - %s' % (team_name, instance['subnet'], subnet_id))
+    print('\tIP: 10.0.%s.%s' % (team_number, instance['ip']))
+    print('\tOS: %s' % (instance['os']))
 
 
 def create_team(team_number, team_name):
-    #create team vpc
+        #create team vpc
     vpc = create_vpc(team_number, team_name)
-    #create team internet gateway
-    ig = create_ig(vpc, team_name)
-    #create vpc peering to interwebs
-    vpc_peering = create_vpc_peering(vpc, team_name)
-    #add routes to team route table and tag it
-    vpc_route_table = create_vpc_route_table(vpc, vpc_peering, ig, team_name)
-    #add route to interwebs route table
+        #create team internet gateway
+    #ig = create_ig(vpc, team_name)
+        #create vpc peering to interwebs
+    #vpc_peering = create_vpc_peering(vpc, team_name)
+        #add routes to team route table and tag it
+    #vpc_route_table = create_vpc_route_table(vpc, vpc_peering, ig, team_name)
+        #add route to interwebs route table
     cidr = '10.0.%s.0/24' % (team_number)
-    add_route(interwebs_rtb, vpc_peering, cidr)
+    #add_route(interwebs_rtb, vpc_peering, cidr)
 
     last_octet = 0
     #create router subnet if used
     if router == "true":
         subnet = create_subnet(vpc, team_number, team_name, last_octet, 'Router', 'a')
-        #get new last octet for cidr
+            #get new last octet for cidr
         last_octet += ip_count
 
     #create workspaces subnets and directory if used
     if workspaces == "true":
         subnet = create_subnet(vpc, team_number, team_name, last_octet, 'Workspaces1', 'a')
         workspaces1_id = subnet.id
-        #get new last octet for cidr
+            #get new last octet for cidr
         last_octet += ip_count
         subnet = create_subnet(vpc, team_number, team_name, last_octet, 'Workspaces2', 'b')
         workspaces2_id = subnet.id
-        #get new last octet for cidr
+            #get new last octet for cidr
         last_octet += ip_count
         #create_directory(team_name, vpc, workspaces1_id, workspaces2_id)
 
@@ -239,6 +252,8 @@ def create_team(team_number, team_name):
         subnet = create_subnet(vpc, team_number, team_name, last_octet, subnet_name, 'a')
         #get new last octet for cidr
         last_octet += ip_count
+
+    get_instance_config(vpc, team_number, team_name)
 
 
 #main
