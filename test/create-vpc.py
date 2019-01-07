@@ -16,6 +16,7 @@ config.read('config.ini')
 
 #variables
 
+#create variables from config.ini
 global event
 event = (config['EVENT']['name'])
 global aws_region
@@ -37,9 +38,8 @@ workspaces = (config['NETWORK']['workspaces'])
 global router
 router = (config['NETWORK']['router'])
 
-
-
-#determine number of subnets and cidr
+#determine number of subnets and cidr for team vpc
+#add 2 subnets is workspaces are used, and 1 subnet if a custom router is used
 global subnet_cidr
 if workspaces == 'true':
     subnet_count += 2
@@ -71,6 +71,7 @@ ec2 = boto3.resource('ec2')
 #functions
 
 def passwd_generator(size=10, chars=string.ascii_letters + string.digits):
+    #generate a 12 character password beginning with a capital letter and ending in a number
     first = random.choice(string.ascii_uppercase)
     last = random.choice(string.digits)
     middle = ''.join(random.choice(chars) for x in range(size))
@@ -78,19 +79,21 @@ def passwd_generator(size=10, chars=string.ascii_letters + string.digits):
 
 
 def create_tags(resource, team_name):
+    #create name, team, and event tags
     tag = resource.create_tags(Tags=[{'Key': 'Name', 'Value': '%s' % (team_name)}])
     tag = resource.create_tags(Tags=[{'Key': 'Team', 'Value': '%s' % (team_name)}])
     tag = resource.create_tags(Tags=[{'Key': 'Event', 'Value': '%s' % (event)}])
 
 
 def create_tags_subnet(subnet, team_name, subnet_name):
+    #create name, team, and event tags for subnets which use a unique name
     tag = subnet.create_tags(Tags=[{'Key': 'Name', 'Value': '%s-%s' % (team_name, subnet_name)}])
     tag = subnet.create_tags(Tags=[{'Key': 'Team', 'Value': '%s' % (team_name)}])
     tag = subnet.create_tags(Tags=[{'Key': 'Event', 'Value': '%s' % (event)}])
 
 
 def create_subnet(vpc, team_number, team_name, last_octet, subnet_name, avb_zone):
-    #create team subnets
+    #create team subnets with appropriate cidr block for class c vpc based on number of subnets needed
     subnet = vpc.create_subnet(CidrBlock='10.0.%s.%s/%s' % (team_number, last_octet, subnet_cidr), AvailabilityZone='%s%s' % (aws_region, avb_zone))
     create_tags_subnet(subnet, team_name, subnet_name)
     print('Created Subnet %s-%s - %s' % (team_name, subnet_name, subnet.id))
@@ -99,7 +102,7 @@ def create_subnet(vpc, team_number, team_name, last_octet, subnet_name, avb_zone
 
 
 def create_vpc(team_number, team_name):
-    #create team vpc
+    #create team vpc with cidr block 10.0.n.0/24 where n = team number
     vpc = ec2.create_vpc(CidrBlock='10.0.%s.0/24' % (team_number))
     vpc.wait_until_available()
     create_tags(vpc, team_name)
@@ -119,11 +122,14 @@ def create_ig(vpc, team_name):
 
 
 def create_vpc_peering(vpc, team_name):
+    #request a peering connection to the interwebs vpc
     vpc_peering = vpc.request_vpc_peering_connection(
         PeerVpcId='%s' % (interwebs_id)
     )
+    #accept the peering request
     accept_peering_connection = ec2.VpcPeeringConnection('interwebs_id')
     vpc_peering.accept()
+    #create tag for peering connection - boto3 doesn't have a create_tags class for vpc peering
     os.system('aws ec2 create-tags --region %s --resources %s --tags Key=Name,Value="%s" Key=Team,Value="%s" Key=Event,Value="%s"' % (aws_region, vpc_peering.id, team_name, team_name, event))
     print('Creating VPC Peering - %s' % (vpc_peering.id))
 
@@ -131,14 +137,17 @@ def create_vpc_peering(vpc, team_name):
 
 
 def create_vpc_route_table(vpc, vpc_peering, ig, team_name):
+    #get the route table id for the route table attached to the created vpc
     vpc_route_table = vpc.route_tables.all()
     for t in vpc_route_table:
         vpc_route_table_id = t.route_table_id
+    #add route to vpc peering connection for interwebs traffic
     route = ec2.RouteTable('%s' % (vpc_route_table_id))
     route.create_route(
         DestinationCidrBlock='%s' % (interwebs_cidr),
         VpcPeeringConnectionId='%s' % (vpc_peering.id)
     )
+    #add default route to internet gateway
     route.create_route(
         DestinationCidrBlock='0.0.0.0/0',
         GatewayId='%s' % (ig.id)
@@ -147,8 +156,9 @@ def create_vpc_route_table(vpc, vpc_peering, ig, team_name):
     print('Created Route Table %s - %s' % (team_name, vpc_route_table_id))
 
 
-def add_route(vpc_peering, cidr):
-    route = ec2.RouteTable('%s' % (interwebs_rtb))
+def add_route(rtb, vpc_peering, cidr):
+    #add a route to a route table
+    route = ec2.RouteTable('%s' % (rtb))
     route.create_route(
         DestinationCidrBlock='%s' % (cidr),
         VpcPeeringConnectionId='%s' % (vpc_peering.id)
@@ -156,6 +166,7 @@ def add_route(vpc_peering, cidr):
 
 
 def create_directory(team_name, vpc, workspaces1_id, workspaces2_id):
+    #create a simple ad directory for aws workspaces
     directory_passwd = passwd_generator()
     client = boto3.client('ds')
     directory = client.create_directory(
@@ -178,6 +189,14 @@ def create_directory(team_name, vpc, workspaces1_id, workspaces2_id):
 
     return directory
 
+def get_instance_config(vpc, team_number, team_name):
+    #create instance for team_name
+    instance_array = (config.items('INSTANCES'))
+    #for each subnet in config.ini [INSTANCES]
+    for i in range(len(instance_array)):
+        instance = (json.loads(instance_array[i][1]))
+        
+
 
 def create_team(team_number, team_name):
     #create team vpc
@@ -190,30 +209,37 @@ def create_team(team_number, team_name):
     vpc_route_table = create_vpc_route_table(vpc, vpc_peering, ig, team_name)
     #add route to interwebs route table
     cidr = '10.0.%s.0/24' % (team_number)
-    add_route(vpc_peering, cidr)
+    add_route(interwebs_rtb, vpc_peering, cidr)
 
     last_octet = 0
     #create router subnet if used
     if router == "true":
         subnet = create_subnet(vpc, team_number, team_name, last_octet, 'Router', 'a')
+        #get new last octet for cidr
         last_octet += ip_count
 
     #create workspaces subnets and directory if used
     if workspaces == "true":
         subnet = create_subnet(vpc, team_number, team_name, last_octet, 'Workspaces1', 'a')
         workspaces1_id = subnet.id
+        #get new last octet for cidr
         last_octet += ip_count
         subnet = create_subnet(vpc, team_number, team_name, last_octet, 'Workspaces2', 'b')
         workspaces2_id = subnet.id
+        #get new last octet for cidr
         last_octet += ip_count
-        create_directory(team_name, vpc, workspaces1_id, workspaces2_id)
+        #create_directory(team_name, vpc, workspaces1_id, workspaces2_id)
 
     #create subnets
     subnet_name_array = (config.items('SUBNETS'))
+    #for each subnet in config.ini [SUBNETS]
     for i in range(len(subnet_name_array)):
+        #get subnet name
         subnet_name = subnet_name_array[i][1]
         subnet = create_subnet(vpc, team_number, team_name, last_octet, subnet_name, 'a')
+        #get new last octet for cidr
         last_octet += ip_count
+
 
 #main
 
