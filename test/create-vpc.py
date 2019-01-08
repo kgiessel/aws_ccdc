@@ -83,16 +83,16 @@ def passwd_generator(size=10, chars=string.ascii_letters + string.digits):
 def create_keypair(team_name):
     ec2temp = boto3.client('ec2')
     keypair = ec2temp.create_key_pair(KeyName='%s' % (team_name))
-    create_log(team_name, 'Private Key %s' % (team_name), keypair['KeyMaterial'])
+    create_log(team_name, 'Private Key %s \n\n' % (team_name), keypair['KeyMaterial'])
 
 
 def create_log(team_name, desc, log):
     filename = "%s-log.txt" % (team_name)
     file = open(filename,"a")
     file.writelines(desc)
-    file.writelines('\n\n')
+    file.writelines(' - ')
     file.writelines(log)
-    file.writelines('\n\n####################\n\n')
+    file.writelines('\n\n')
     file.close()
     print('Created %s' % (desc))
 
@@ -229,9 +229,6 @@ def create_instance(team_name, team_number, subnet_id, instance):
 
 
 def create_team(team_number, team_name):
-
-    create_keypair(team_name)
-
         #create team vpc
     vpc = create_vpc(team_number, team_name)
         #create team internet gateway
@@ -273,15 +270,10 @@ def create_team(team_number, team_name):
             #get new last octet for cidr
         last_octet += ip_count
 
+    create_keypair(team_name)
     get_instance_config(vpc, team_number, team_name)
 
 
 #main
 
-print('################')
-print('Creating %s' % (team_name))
-print('')
 create_team(team_number, team_name)
-print('')
-print('%s Successfully Created!' % (team_name))
-print('')
