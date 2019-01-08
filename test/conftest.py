@@ -24,6 +24,8 @@ workspaces = (config['NETWORK']['workspaces'])
 router = (config['NETWORK']['router'])
 
 boto3.setup_default_session(region_name='%s' % (aws_region))
+global ec2
+ec2 = boto3.client('ec2')
 
 team_number = 0
 if team_number < 10:
@@ -42,11 +44,8 @@ def create_tags(resource, team_name, event):
     tag = resource.create_tags(Tags=[{'Key': 'Team', 'Value': '%s' % (team_name)}])
     tag = resource.create_tags(Tags=[{'Key': 'Event', 'Value': '%s' % (event)}])
 
-instance_array = (config.items('INSTANCES'))
-#for each subnet in config.ini [INSTANCES]
+def create_keypair(team_name):
+    keypair = ec2.create_key_pair(KeyName='%s' % (team_name))
+    print(keypair['KeyMaterial'])
 
-for i in range(len(instance_array)):
-    instance = (json.loads(instance_array[i][1]))
-    print(instance['name'])
-    print(instance['subnet'])
-    
+create_keypair(team_name)
