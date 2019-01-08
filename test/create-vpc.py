@@ -222,9 +222,15 @@ def get_instance_config(vpc, team_number, team_name):
 
 
 def create_instance(team_name, team_number, subnet_id, instance):
+    filename = "%s-log.txt" % (team_name)
+    file = open(filename,"a")
+    file.writelines('Creating Instance %s' % (instance['name']))
     print('Creating Instance %s' % (instance['name']))
+    file.writelines('\ton subnet %s-%s - %s' % (team_name, instance['subnet'], subnet_id))
     print('\ton subnet %s-%s - %s' % (team_name, instance['subnet'], subnet_id))
+    file.writelines('\tIP: 10.0.%s.%s' % (team_number, instance['ip']))
     print('\tIP: 10.0.%s.%s' % (team_number, instance['ip']))
+    file.writelines('\tOS: %s' % (instance['os']))
     print('\tOS: %s' % (instance['os']))
 
 
