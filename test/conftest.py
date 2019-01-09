@@ -14,6 +14,10 @@ import json
 config = configparser.ConfigParser()
 config.read('config.ini')
 
+#global dryrun
+#dryrun=True
+
+global event
 event = (config['EVENT']['name'])
 aws_region =  (config['AWS']['region'])
 num_teams = (config['TEAMS']['count'])
@@ -24,8 +28,10 @@ workspaces = (config['NETWORK']['workspaces'])
 router = (config['NETWORK']['router'])
 
 boto3.setup_default_session(region_name='%s' % (aws_region))
-global ec2
-ec2 = boto3.client('ec2')
+global gbl_ec2resource
+gbl_ec2resource = boto3.resource('ec2')
+global gbl_ec2client
+gbl_ec2client = boto3.client('ec2')
 
 team_number = 0
 if team_number < 10:
@@ -39,13 +45,18 @@ def passwd_generator(size=10, chars=string.ascii_letters + string.digits):
     middle = ''.join(random.choice(chars) for x in range(size))
     return first + middle + last
 
-def create_tags(resource, team_name, event):
-    tag = resource.create_tags(Tags=[{'Key': 'Name', 'Value': '%s' % (team_name)}])
-    tag = resource.create_tags(Tags=[{'Key': 'Team', 'Value': '%s' % (team_name)}])
-    tag = resource.create_tags(Tags=[{'Key': 'Event', 'Value': '%s' % (event)}])
+def create_tags(resource, team_name):
+    tag = resource.create_tags(
+        Tags=[
+            {'Key': 'Name', 'Value': '%s' % (team_name)},
+            {'Key': 'Team', 'Value': '%s' % (team_name)},
+            {'Key': 'Event', 'Value': '%s' % (event)}
+        ],
+        DryRun=True
+    )
+    #tag = resource.create_tags(Tags=[{'Key': 'Team', 'Value': '%s' % (team_name)}])
+    #tag = resource.create_tags(Tags=[{'Key': 'Event', 'Value': '%s' % (event)}])
 
-def create_keypair(team_name):
-    keypair = ec2.create_key_pair(KeyName='%s' % (team_name))
-    print(keypair['KeyMaterial'])
+instance = gbl_ec2resource.Instance('i-06d5123670e1eb5ec')
 
-create_keypair(team_name)
+create_tags(instance, team_name)
