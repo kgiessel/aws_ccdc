@@ -56,3 +56,59 @@ Creating Instance test02
 	IP: 10.0.0.15
 	OS: windows
 
+VPC Team00 - vpc-087a3c408b4c1da01
+
+Internet Gateway Team00 - igw-0f332b9f6f7257caf
+
+Peering Connection Team00 - pcx-074d215200f339e9c
+
+Route Table Team00 - rtb-010ea93aba00d65cb
+
+Subnet Team00-DMZ - subnet-0a136051009c5f28e
+
+Subnet Team00-DOC - subnet-024fe67bc75f55680
+
+Subnet Team00-Residents - subnet-0d401ad9d7a2c0596
+
+Subnet Team00-Workspaces1 - subnet-0c7112cbdd2aac5d9
+
+Subnet Team00-Workspaces2 - subnet-08d0c14a7ff40495f
+
+Private Key Team00 
+
+ - -----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEAim/HR+JLyXf36c8er3+bXb/yx/SKyP5/gPenC5tkLxR6debJydjyu1+zt+Ku
+BJah1MdgPSJIvsA9GuUwcJ+HQlutGCBNEy0asTvCemvnpFjYxei8jKe/C+pM4NJn9yeyz33jamLD
+A/dBPwJ8lk9cqjXHItmPIEz+3jk+qTiFNH6RyQ2vNxWPmkAJDku57KLbB5wKaKeBY4YAmVwLyG33
+Qa5Y7Yrd9QQPKAzUeAZBAfSxTdjDFXMTk0K4gJRu7k7ai8J4RlTnqneN1sldDu2FpfEBp1ryz5wq
+aPxdhtFIhAWB9IqULQmzF1E7/ABZqEddPD/vP08zq5NGZmcSse3a4QIDAQABAoIBAGDfPzAKJsZg
+cNbn3K0qOmor+5P4h3WGwWpZ4ka5Ai3/woHmcaYRbim4Gma+9M65KZ1ftvSQnR7+HsRHRNJKj7fb
+txB+6fBVS6xiCQDpqTrUATzcU7SJXaLU3d8k3SOSYAnaKd00JwsLZljVQKFd/5YL88FrREByIJcY
+r8RyjKPiNem9JEOrAfy1ZjVaC5arTQ3Dhkd3q0yIi4/lb+6zDsmo0HFQGwtNdhcDCg5JI1O908Xt
+kuCBVbRe6xBgNEvcuVtSl5J9UqTxg2aAcI5HqLlrAkqmsn9EnBIi6AHjM2hlCEhJwD8ilvoi+asK
+gwyUW8ogbLAajvPi0Zi0Upt2TMECgYEAx9Opj+PaWVq+WdGnWBB309czJHyDTYrUKWyYbwMLx1Vm
+vqOPtTOT86/JmrGtqdzMdpV7S2sDkcPS499J8Nrkxgy+V4JzKga4oXdRaVYW76sflZqjZ7InFQMx
+j3gVnu/zDCpRXVesCPFRHKloEG7Hne1pTVK6eA1uZClL1W+AE40CgYEAsVo7vZwSbiOCeNnQNWCE
+aXPLgIKxnizaWDA4MTCicPZ8dzLSsoccuUPUBaya/MI75143U0fO1r1Y1cXTNUiS2H+TGwr+fnVv
+V2rP//cia4yJl4O/FYr2gVHhbzNEdsKgENV8+qy2KhD0sOrrznc91J49D7v/ZygPMbWr3fBdhaUC
+gYEAhsvYeREaLOaSu2I7AaPyQTvM6xL3O+qnnd38of4rBucsLPOGsJQ/fMYbODgdTxV78454onJo
+8P5pF4B7j3cJljPofn2oFDR+faVQjL8fL8N+xduP2RaLWJhT6VT3OMTiblVpl47ZpRqsPaplYZhp
+HbaWLyvcT7m3uudEmZDik80CgYBT7PRaTNH35rvmPoSlza+7Sz2g6bfttyH4G5Frza0BMdNCgP1t
+2DxCe5OIv95z/+JjIZWixldeDSpNtxi0nUxIQU62vGQkKaRvxK77XNKf/FhcJ88z/ZebKMk6WxNp
+873VWYGUCkkF7RIt6m1+PbU3uU4B9R/ui+lsx6C2HPnUtQKBgQCNhOqi/ZHACsukMEKVgScQKgcp
+7KD5+/Go7Ni02C4af+0fxlcL5cHsNbpOd8w1gSnebJ3CoKZL6NA/P1XwYNYhV4TvzND9oy5oHqZe
+kjcX8z6eh3Pmp+ptE0VEof5+zqpJbJHtVShr94nVuhgcE2TRgnpXRV+HP41dfz7jUkr3HA==
+-----END RSA PRIVATE KEY-----
+
+Security Group Team00 - sg-0e2cf1ef33e74f392
+
+Creating Instance test01
+	on subnet Team00-DMZ - subnet-0a136051009c5f28e
+	IP: 10.0.0.14
+	OS: linux
+
+Creating Instance test02
+	on subnet Team00-DOC - subnet-024fe67bc75f55680
+	IP: 10.0.0.15
+	OS: windows
+

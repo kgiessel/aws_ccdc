@@ -269,7 +269,7 @@ def create_team(team_number, team_name):
     add_route(interwebs_rtb, vpc_peering, cidr)
 
     last_octet = 0
-]
+
             #create subnets
     subnet_name_array = (config.items('SUBNETS'))
         #for each subnet in config.ini [SUBNETS]
