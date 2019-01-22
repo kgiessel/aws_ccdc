@@ -1,114 +1,41 @@
-VPC Team00 - vpc-00c4ac9f27ec03919
+VPC Team00 - vpc-04d0f6c884ad31d92
 
-Internet Gateway Team00 - igw-0cb212e70a1a2916a
+Internet Gateway Team00 - igw-0d409bbe43d09dd7a
 
-Peering Connection Team00 - pcx-03451994aca4c384b
+Peering Connection Team00 - pcx-01ec053d24925b5ba
 
-Route Table Team00 - rtb-02f2be2039cc0bcef
+Route Table Team00 - rtb-0e3cade764c6edbf6
 
-Subnet Team00-Router - subnet-04e7a7967eabdea7e
-
-Subnet Team00-Workspaces1 - subnet-0b943512269e5de03
-
-Subnet Team00-Workspaces2 - subnet-0ad6b8579f6df1d1e
-
-Subnet Team00-DMZ - subnet-08db09a973ba65a2e
-
-Subnet Team00-DOC - subnet-0cf98cf0eb2dd9bd3
-
-Subnet Team00-Residents - subnet-04175595f2a035cf6
+Subnet Team00-DOC - subnet-0dd6085c63cfb4f90
 
 Private Key Team00 
 
  - -----BEGIN RSA PRIVATE KEY-----
-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
+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
 -----END RSA PRIVATE KEY-----
 
-Security Group Team00 - sg-0f7d0ea518a3e5e8b
+Security Group Team00 - sg-0959303d71d89b319
 
-Creating Instance test01
-	on subnet Team00-DMZ - subnet-08db09a973ba65a2e
-	IP: 10.0.0.14
-	OS: linux
-
-Creating Instance test02
-	on subnet Team00-DOC - subnet-0cf98cf0eb2dd9bd3
-	IP: 10.0.0.15
-	OS: windows
-
-VPC Team00 - vpc-087a3c408b4c1da01
-
-Internet Gateway Team00 - igw-0f332b9f6f7257caf
-
-Peering Connection Team00 - pcx-074d215200f339e9c
-
-Route Table Team00 - rtb-010ea93aba00d65cb
-
-Subnet Team00-DMZ - subnet-0a136051009c5f28e
-
-Subnet Team00-DOC - subnet-024fe67bc75f55680
-
-Subnet Team00-Residents - subnet-0d401ad9d7a2c0596
-
-Subnet Team00-Workspaces1 - subnet-0c7112cbdd2aac5d9
-
-Subnet Team00-Workspaces2 - subnet-08d0c14a7ff40495f
-
-Private Key Team00 
-
- - -----BEGIN RSA PRIVATE KEY-----
-MIIEpAIBAAKCAQEAim/HR+JLyXf36c8er3+bXb/yx/SKyP5/gPenC5tkLxR6debJydjyu1+zt+Ku
-BJah1MdgPSJIvsA9GuUwcJ+HQlutGCBNEy0asTvCemvnpFjYxei8jKe/C+pM4NJn9yeyz33jamLD
-A/dBPwJ8lk9cqjXHItmPIEz+3jk+qTiFNH6RyQ2vNxWPmkAJDku57KLbB5wKaKeBY4YAmVwLyG33
-Qa5Y7Yrd9QQPKAzUeAZBAfSxTdjDFXMTk0K4gJRu7k7ai8J4RlTnqneN1sldDu2FpfEBp1ryz5wq
-aPxdhtFIhAWB9IqULQmzF1E7/ABZqEddPD/vP08zq5NGZmcSse3a4QIDAQABAoIBAGDfPzAKJsZg
-cNbn3K0qOmor+5P4h3WGwWpZ4ka5Ai3/woHmcaYRbim4Gma+9M65KZ1ftvSQnR7+HsRHRNJKj7fb
-txB+6fBVS6xiCQDpqTrUATzcU7SJXaLU3d8k3SOSYAnaKd00JwsLZljVQKFd/5YL88FrREByIJcY
-r8RyjKPiNem9JEOrAfy1ZjVaC5arTQ3Dhkd3q0yIi4/lb+6zDsmo0HFQGwtNdhcDCg5JI1O908Xt
-kuCBVbRe6xBgNEvcuVtSl5J9UqTxg2aAcI5HqLlrAkqmsn9EnBIi6AHjM2hlCEhJwD8ilvoi+asK
-gwyUW8ogbLAajvPi0Zi0Upt2TMECgYEAx9Opj+PaWVq+WdGnWBB309czJHyDTYrUKWyYbwMLx1Vm
-vqOPtTOT86/JmrGtqdzMdpV7S2sDkcPS499J8Nrkxgy+V4JzKga4oXdRaVYW76sflZqjZ7InFQMx
-j3gVnu/zDCpRXVesCPFRHKloEG7Hne1pTVK6eA1uZClL1W+AE40CgYEAsVo7vZwSbiOCeNnQNWCE
-aXPLgIKxnizaWDA4MTCicPZ8dzLSsoccuUPUBaya/MI75143U0fO1r1Y1cXTNUiS2H+TGwr+fnVv
-V2rP//cia4yJl4O/FYr2gVHhbzNEdsKgENV8+qy2KhD0sOrrznc91J49D7v/ZygPMbWr3fBdhaUC
-gYEAhsvYeREaLOaSu2I7AaPyQTvM6xL3O+qnnd38of4rBucsLPOGsJQ/fMYbODgdTxV78454onJo
-8P5pF4B7j3cJljPofn2oFDR+faVQjL8fL8N+xduP2RaLWJhT6VT3OMTiblVpl47ZpRqsPaplYZhp
-HbaWLyvcT7m3uudEmZDik80CgYBT7PRaTNH35rvmPoSlza+7Sz2g6bfttyH4G5Frza0BMdNCgP1t
-2DxCe5OIv95z/+JjIZWixldeDSpNtxi0nUxIQU62vGQkKaRvxK77XNKf/FhcJ88z/ZebKMk6WxNp
-873VWYGUCkkF7RIt6m1+PbU3uU4B9R/ui+lsx6C2HPnUtQKBgQCNhOqi/ZHACsukMEKVgScQKgcp
-7KD5+/Go7Ni02C4af+0fxlcL5cHsNbpOd8w1gSnebJ3CoKZL6NA/P1XwYNYhV4TvzND9oy5oHqZe
-kjcX8z6eh3Pmp+ptE0VEof5+zqpJbJHtVShr94nVuhgcE2TRgnpXRV+HP41dfz7jUkr3HA==
------END RSA PRIVATE KEY-----
-
-Security Group Team00 - sg-0e2cf1ef33e74f392
-
-Creating Instance test01
-	on subnet Team00-DMZ - subnet-0a136051009c5f28e
-	IP: 10.0.0.14
-	OS: linux
-
-Creating Instance test02
-	on subnet Team00-DOC - subnet-024fe67bc75f55680
-	IP: 10.0.0.15
-	OS: windows
-
+Creating Instance Confundus
+	on subnet Team00-DOC - subnet-0dd6085c63cfb4f90
+	IP: 10.0.0.10

@@ -96,20 +96,11 @@ def create_log(team_name, desc, log):
     print('Created %s' % (desc))
 
 
-def create_tags(resource, team_name):
+def create_tags(resource, tag_name):
         #create name, team, and event tags
     tag = resource.create_tags(Tags=[
-        {'Key': 'Name', 'Value': '%s' % (team_name)},
-        {'Key': 'Team', 'Value': '%s' % (team_name)},
-        {'Key': 'Event', 'Value': '%s' % (event)}
-    ])
-
-
-def create_tags_subnet(subnet, team_name, subnet_name):
-        #create name, team, and event tags for subnets which use a unique name
-    tag = subnet.create_tags(Tags=[
-        {'Key': 'Name', 'Value': '%s-%s' % (team_name, subnet_name)},
-        {'Key': 'Team', 'Value': '%s' % (team_name)},
+        {'Key': 'Name', 'Value': '%s' % (tag_name)},
+        {'Key': 'Team', 'Value': '%s' % (tag_name)},
         {'Key': 'Event', 'Value': '%s' % (event)}
     ])
 
@@ -117,7 +108,8 @@ def create_tags_subnet(subnet, team_name, subnet_name):
 def create_subnet(vpc, team_number, team_name, last_octet, subnet_name, avb_zone):
         #create team subnets with appropriate cidr block for class c vpc based on number of subnets needed
     subnet = vpc.create_subnet(CidrBlock='10.0.%s.%s/%s' % (team_number, last_octet, subnet_cidr), AvailabilityZone='%s%s' % (aws_region, avb_zone))
-    create_tags_subnet(subnet, team_name, subnet_name)
+    subnet_tag_name = '%s-%s' % (team_name, subnet_name)
+    create_tags(subnet, subnet_tag_name)
     create_log(team_name, 'Subnet %s-%s' % (team_name, subnet_name), subnet.id)
 
     return subnet
@@ -177,12 +169,12 @@ def create_vpc_route_table(vpc, vpc_peering, ig, team_name):
     create_tags(route, team_name)
     create_log(team_name, 'Route Table %s' % (team_name), vpc_route_table_id)
 
-def add_route(rtb, vpc_peering, cidr):
+def add_route(rtb, destination, cidr):
         #add a route to a route table
     route = gbl_ec2resource.RouteTable('%s' % (rtb))
     route.create_route(
         DestinationCidrBlock='%s' % (cidr),
-        VpcPeeringConnectionId='%s' % (vpc_peering.id)
+        VpcPeeringConnectionId='%s' % (destination.id)
     )
 
 
@@ -229,7 +221,7 @@ def create_security_group(vpc, team_name):
     return security_group
 
 
-def get_instance_config(vpc, team_number, team_name):
+def get_instance_config(vpc, team_number, team_name, security_group):
         #create instance for team_name
     instance_array = (config.items('INSTANCES'))
         #for each subnet in config.ini [INSTANCES]
@@ -239,20 +231,36 @@ def get_instance_config(vpc, team_number, team_name):
         subnet_id = list(gbl_ec2resource.subnets.filter(Filters=filters))
         for t in subnet_id:
             subnet_id = t.subnet_id
-        create_instance(team_name, team_number, subnet_id, instance)
+        create_instance(team_name, team_number, subnet_id, instance, security_group)
 
 
-def create_instance(team_name, team_number, subnet_id, instance):
+def create_instance(team_name, team_number, subnet_id, instance, security_group):
+    ec2instance = gbl_ec2resource.create_instances(
+        ImageId='%s' % (instance['ami']),
+        InstanceType='%s' % (instance['type']),
+        KeyName='%s' % (team_name),
+        SecurityGroupIds=['%s' % (security_group.id)],
+        SubnetId='%s' % (subnet_id),
+        PrivateIpAddress='10.0.%s.%s' % (team_number, instance['ip']),
+        MaxCount=1,
+        MinCount=1
+    )
+    for t in ec2instance:
+        instance_id = t.instance_id
+    ec2instance = gbl_ec2resource.Instance(instance_id)
+    instance_name='%s-%s' % (team_name, instance['name'])
+    create_tags(ec2instance, instance_name)
+
     filename = "%s-log.txt" % (team_name)
     file = open(filename,"a")
-    file.writelines('Creating Instance %s\n' % (instance['name']))
-    print('Creating Instance %s' % (instance['name']))
+    file.writelines('Creating Instance %s\n' % (instance_name))
+    print('Creating Instance %s' % (instance_name))
     file.writelines('\ton subnet %s-%s - %s\n' % (team_name, instance['subnet'], subnet_id))
     print('\ton subnet %s-%s - %s' % (team_name, instance['subnet'], subnet_id))
     file.writelines('\tIP: 10.0.%s.%s\n' % (team_number, instance['ip']))
     print('\tIP: 10.0.%s.%s' % (team_number, instance['ip']))
-    file.writelines('\tOS: %s\n\n' % (instance['os']))
-    print('\tOS: %s' % (instance['os']))
+    file.writelines('\tType: %s\n\n' % (instance['type']))
+    print('\tType: %s' % (instance['type']))
 
 
 def create_team(team_number, team_name):
@@ -290,11 +298,11 @@ def create_team(team_number, team_name):
         workspaces2_id = subnet.id
             #get new last octet for cidr
         last_octet += ip_count
-        #create_directory(team_name, vpc, workspaces1_id, workspaces2_id)
+        create_directory(team_name, vpc, workspaces1_id, workspaces2_id)
 
     create_keypair(team_name)
     security_group = create_security_group(vpc, team_name)
-    get_instance_config(vpc, team_number, team_name)
+    get_instance_config(vpc, team_number, team_name, security_group)
 
 
 
