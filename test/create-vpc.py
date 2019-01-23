@@ -248,6 +248,9 @@ def create_instance(team_name, team_number, subnet_id, instance, security_group)
     for t in ec2instance:
         instance_id = t.instance_id
     ec2instance = gbl_ec2resource.Instance(instance_id)
+
+
+
     instance_name='%s-%s' % (team_name, instance['name'])
     create_tags(ec2instance, instance_name)
 
@@ -259,8 +262,23 @@ def create_instance(team_name, team_number, subnet_id, instance, security_group)
     print('\ton subnet %s-%s - %s' % (team_name, instance['subnet'], subnet_id))
     file.writelines('\tIP: 10.0.%s.%s\n' % (team_number, instance['ip']))
     print('\tIP: 10.0.%s.%s' % (team_number, instance['ip']))
-    file.writelines('\tType: %s\n\n' % (instance['type']))
+    file.writelines('\tType: %s\n' % (instance['type']))
     print('\tType: %s' % (instance['type']))
+
+    if workspaces == "false":
+        elastic_ip = gbl_ec2client.allocate_address()
+        os.system('aws ec2 create-tags --region %s --resources %s --tags Key=Name,Value="%s" Key=Team,Value="%s" Key=Event,Value="%s"' % (aws_region, elastic_ip['AllocationId'], instance_name, team_name, event))
+        file.writelines('\tPublic IP: %s\n' % (elastic_ip['PublicIp']))
+        print('\tPublic IP: %s' % (elastic_ip['PublicIp']))
+        #wait until instance is running before associating elastic IP
+        ec2instance.wait_until_running()
+        assign_eip = gbl_ec2client.associate_address(
+            AllocationId=(elastic_ip['AllocationId']),
+            InstanceId=(instance_id)
+        )
+    file.writelines('\n')
+
+    return ec2instance
 
 
 def create_team(team_number, team_name):
