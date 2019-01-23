@@ -38,6 +38,8 @@ global workspaces
 workspaces = (config['NETWORK']['workspaces'])
 global router
 router = (config['NETWORK']['router'])
+global route53_zone
+route53_zone = (config['AWS']['route53_zone'])
 
 #determine number of subnets and cidr for team vpc
 #add 2 subnets is workspaces are used
@@ -249,8 +251,6 @@ def create_instance(team_name, team_number, subnet_id, instance, security_group)
         instance_id = t.instance_id
     ec2instance = gbl_ec2resource.Instance(instance_id)
 
-
-
     instance_name='%s-%s' % (team_name, instance['name'])
     create_tags(ec2instance, instance_name)
 
@@ -270,12 +270,36 @@ def create_instance(team_name, team_number, subnet_id, instance, security_group)
         os.system('aws ec2 create-tags --region %s --resources %s --tags Key=Name,Value="%s" Key=Team,Value="%s" Key=Event,Value="%s"' % (aws_region, elastic_ip['AllocationId'], instance_name, team_name, event))
         file.writelines('\tPublic IP: %s\n' % (elastic_ip['PublicIp']))
         print('\tPublic IP: %s' % (elastic_ip['PublicIp']))
+        print('Waiting for instance to be in running state')
         #wait until instance is running before associating elastic IP
         ec2instance.wait_until_running()
         assign_eip = gbl_ec2client.associate_address(
             AllocationId=(elastic_ip['AllocationId']),
             InstanceId=(instance_id)
         )
+        route53 = boto3.client('route53')
+        create_dns_record = route53.change_resource_record_sets(
+            HostedZoneId=(route53_zone),
+            ChangeBatch={
+                'Comment': (instance_name),
+                'Changes': [
+                    {
+                        'Action': 'CREATE',
+                        'ResourceRecordSet': {
+                            'Name': '%s.%s.prccdc.org' % (instance['name'], team_name),
+                            'Type': 'A',
+                            'TTL': 60,
+                            'ResourceRecords': [
+                                {
+                                    'Value' : (elastic_ip['PublicIp'])
+                                },
+                            ],
+                        }
+                    },
+                ]
+            }
+        )
+
     file.writelines('\n')
 
     return ec2instance
