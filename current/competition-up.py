@@ -3,7 +3,7 @@
 __author__ = "Kurt Giessel"
 __copyright__ = "Copyright 2019, Highline College"
 __license__ = "GPL"
-__version__ = "0.2"
+__version__ = "0.3"
 __email__ = "kgiessel@highline.edu"
 
 import boto3
