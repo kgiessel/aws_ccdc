@@ -79,7 +79,7 @@ def passwd_generator(size=10, chars=string.ascii_letters + string.digits):
 def create_keypair(team_name):
     #cretate a keypair
     keypair = gbl_ec2client.create_key_pair(KeyName='%s' % (team_name))
-    create_log(team_name, 'Private Key %s \n\n' % (team_name), keypair['KeyMaterial'])
+    create_log(team_name, 'Private Key %s' % (team_name), keypair['KeyMaterial'])
 
 
 def create_log(team_name, desc, log):
@@ -364,8 +364,8 @@ while team_number <= int(num_teams):
         team_name = '%s0%s' % (name_teams, team_number)
     else:
         team_name = '%s%s' % (name_teams, team_number)
-    print('########\nCreateing %s\n########' % (team_name))
+    print('########\nCreateing %s\n########\n' % (team_name))
     create_team(team_number, team_name)
     team_number += 1
 
-print('%s teams successfully created' % (team_number))
+print('\n%s teams successfully created' % (team_number))
