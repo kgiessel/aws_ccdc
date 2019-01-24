@@ -1,9 +1,9 @@
 """create-vpc.py"""
 
 __author__ = "Kurt Giessel"
-__copyright__ = "Copyright 2018, Highline College"
+__copyright__ = "Copyright 2019, Highline College"
 __license__ = "GPL"
-__version__ = "0.1"
+__version__ = "0.2"
 __email__ = "kgiessel@highline.edu"
 
 import boto3
@@ -68,7 +68,7 @@ gbl_ec2client = boto3.client('ec2')
 #functions
 
 def passwd_generator(size=10, chars=string.ascii_letters + string.digits):
-        #generate a 12 character password beginning with a capital letter and ending in a number
+    #generate a 12 character password beginning with a capital letter and ending in a number
     first = random.choice(string.ascii_uppercase)
     last = random.choice(string.digits)
     middle = ''.join(random.choice(chars) for x in range(size))
@@ -77,11 +77,13 @@ def passwd_generator(size=10, chars=string.ascii_letters + string.digits):
 
 
 def create_keypair(team_name):
+    #cretate a keypair
     keypair = gbl_ec2client.create_key_pair(KeyName='%s' % (team_name))
     create_log(team_name, 'Private Key %s \n\n' % (team_name), keypair['KeyMaterial'])
 
 
 def create_log(team_name, desc, log):
+    #write log file
     filename = "%s-log.txt" % (team_name)
     file = open(filename,"a")
     file.writelines(desc)
@@ -93,7 +95,7 @@ def create_log(team_name, desc, log):
 
 
 def create_tags(resource, tag_name):
-        #create name, team, and event tags
+    #create name, team, and event tags
     tag = resource.create_tags(Tags=[
         {'Key': 'Name', 'Value': '%s' % (tag_name)},
         {'Key': 'Team', 'Value': '%s' % (tag_name)},
@@ -102,7 +104,7 @@ def create_tags(resource, tag_name):
 
 
 def create_subnet(vpc, team_number, team_name, last_octet, subnet_name, avb_zone):
-        #create team subnets with appropriate cidr block for class c vpc based on number of subnets needed
+    #create team subnets with appropriate cidr block for class c vpc based on number of subnets needed
     subnet = vpc.create_subnet(CidrBlock='10.0.%s.%s/%s' % (team_number, last_octet, subnet_cidr), AvailabilityZone='%s%s' % (aws_region, avb_zone))
     subnet_tag_name = '%s-%s' % (team_name, subnet_name)
     create_tags(subnet, subnet_tag_name)
@@ -112,7 +114,7 @@ def create_subnet(vpc, team_number, team_name, last_octet, subnet_name, avb_zone
 
 
 def create_vpc(team_number, team_name):
-        #create team vpc with cidr block 10.0.n.0/24 where n = team number
+    #create team vpc with cidr block 10.0.n.0/24 where n = team number
     vpc = gbl_ec2resource.create_vpc(CidrBlock='10.0.%s.0/24' % (team_number))
     vpc.wait_until_available()
     create_tags(vpc, team_name)
@@ -122,7 +124,7 @@ def create_vpc(team_number, team_name):
 
 
 def create_ig(vpc, team_name):
-        #create and attach internet gateway
+    #create and attach internet gateway
     ig = gbl_ec2resource.create_internet_gateway()
     vpc.attach_internet_gateway(InternetGatewayId=ig.id)
     create_tags(ig, team_name)
@@ -132,14 +134,14 @@ def create_ig(vpc, team_name):
 
 
 def create_vpc_peering(vpc, team_name):
-        #request a peering connection to the interwebs vpc
+    #request a peering connection to the interwebs vpc
     vpc_peering = vpc.request_vpc_peering_connection(
-        PeerVpcId='%s' % (interwebs_id)
+        PeerVpcId=(interwebs_id)
     )
-        #accept the peering request
+    #accept the peering request
     accept_peering_connection = gbl_ec2resource.VpcPeeringConnection('interwebs_id')
     vpc_peering.accept()
-        #create tag for peering connection - boto3 doesn't have a create_tags class for vpc peering
+    #create tag for peering connection - boto3 doesn't have a create_tags class for vpc peering
     os.system('aws ec2 create-tags --region %s --resources %s --tags Key=Name,Value="%s" Key=Team,Value="%s" Key=Event,Value="%s"' % (aws_region, vpc_peering.id, team_name, team_name, event))
     create_log(team_name, 'Peering Connection %s' % (team_name), vpc_peering.id)
 
@@ -147,48 +149,48 @@ def create_vpc_peering(vpc, team_name):
 
 
 def create_vpc_route_table(vpc, vpc_peering, ig, team_name):
-        #get the route table id for the route table attached to the created vpc
+    #get the route table id for the route table attached to the created vpc
     vpc_route_table = vpc.route_tables.all()
     for t in vpc_route_table:
         vpc_route_table_id = t.route_table_id
-        #add route to vpc peering connection for interwebs traffic
+    #add route to vpc peering connection for interwebs traffic
     route = gbl_ec2resource.RouteTable('%s' % (vpc_route_table_id))
     route.create_route(
-        DestinationCidrBlock='%s' % (interwebs_cidr),
-        VpcPeeringConnectionId='%s' % (vpc_peering.id)
+        DestinationCidrBlock=(interwebs_cidr),
+        VpcPeeringConnectionId=(vpc_peering.id)
     )
-        #add default route to internet gateway
+    #add default route to internet gateway
     route.create_route(
         DestinationCidrBlock='0.0.0.0/0',
-        GatewayId='%s' % (ig.id)
+        GatewayId=(ig.id)
     )
     create_tags(route, team_name)
     create_log(team_name, 'Route Table %s' % (team_name), vpc_route_table_id)
 
 def add_route(rtb, destination, cidr):
-        #add a route to a route table
+    #add a route to a route table
     route = gbl_ec2resource.RouteTable('%s' % (rtb))
     route.create_route(
-        DestinationCidrBlock='%s' % (cidr),
-        VpcPeeringConnectionId='%s' % (destination.id)
+        DestinationCidrBlock=(cidr),
+        VpcPeeringConnectionId=(destination.id)
     )
 
 
 def create_directory(team_name, vpc, workspaces1_id, workspaces2_id):
-        #create a simple ad directory for aws workspaces
+    #create a simple ad directory for aws workspaces
     directory_passwd = passwd_generator()
     ds = boto3.client('ds')
     directory = ds.create_directory(
         Name='ws.%s.%s' % (team_name, domain),
-        ShortName='%s' % (team_name),
-        Password='%s' % (directory_passwd),
-        Description='%s' % (team_name),
+        ShortName=(team_name),
+        Password=(directory_passwd),
+        Description=(team_name),
         Size='Small',
         VpcSettings={
-            'VpcId': '%s' % (vpc.id),
+            'VpcId': (vpc.id),
             'SubnetIds': [
-                '%s' % (workspaces1_id),
-                '%s' % (workspaces2_id),
+                (workspaces1_id),
+                (workspaces2_id),
             ]
         }
     )
@@ -200,11 +202,13 @@ def create_directory(team_name, vpc, workspaces1_id, workspaces2_id):
 
 
 def create_security_group(vpc, team_name):
+    #create a security group for the team
     security_group = gbl_ec2client.create_security_group(
         Description = '%s Default Security Group' % (team_name),
-        GroupName = '%s' % (team_name),
-        VpcId = '%s' % (vpc.id)
+        GroupName = (team_name),
+        VpcId = (vpc.id)
     )
+    #set security group ingress rules
     security_group = gbl_ec2resource.SecurityGroup(security_group['GroupId'])
     security_group.authorize_ingress(
         CidrIp = '0.0.0.0/0',
@@ -218,9 +222,9 @@ def create_security_group(vpc, team_name):
 
 
 def get_instance_config(vpc, team_number, team_name, security_group):
-        #create instance for team_name
+    #get instance info from ini file
     instance_array = (config.items('INSTANCES'))
-        #for each subnet in config.ini [INSTANCES]
+    #for each instance in config.ini [INSTANCES]
     for i in range(len(instance_array)):
         instance = (json.loads(instance_array[i][1]))
         filters = [{'Name':'tag:Name', 'Values':['%s-%s' % (team_name, instance['subnet'])]}]
@@ -231,12 +235,13 @@ def get_instance_config(vpc, team_number, team_name, security_group):
 
 
 def create_instance(team_name, team_number, subnet_id, instance, security_group):
+    #create the instance
     ec2instance = gbl_ec2resource.create_instances(
-        ImageId='%s' % (instance['ami']),
-        InstanceType='%s' % (instance['type']),
-        KeyName='%s' % (team_name),
-        SecurityGroupIds=['%s' % (security_group.id)],
-        SubnetId='%s' % (subnet_id),
+        ImageId=(instance['ami']),
+        InstanceType=(instance['type']),
+        KeyName=(team_name),
+        SecurityGroupIds=[(security_group.id)],
+        SubnetId=(subnet_id),
         PrivateIpAddress='10.0.%s.%s' % (team_number, instance['ip']),
         MaxCount=1,
         MinCount=1
@@ -259,6 +264,7 @@ def create_instance(team_name, team_number, subnet_id, instance, security_group)
     file.writelines('\tType: %s\n' % (instance['type']))
     print('\tType: %s' % (instance['type']))
 
+    #if not using workspaces, create elastic ip and dns
     if workspaces == "false":
         create_dns(ec2instance, instance_id, instance_name, team_name, instance)
 
@@ -266,7 +272,9 @@ def create_instance(team_name, team_number, subnet_id, instance, security_group)
     file.close()
 
 def create_dns(ec2instance, instance_id, instance_name, team_name, instance):
+    #create elastic ip and dns
     elastic_ip = gbl_ec2client.allocate_address()
+    #create tag for elastic ip - boto3 doesn't have a create_tags class for elastic ip
     os.system('aws ec2 create-tags --region %s --resources %s --tags Key=Name,Value="%s" Key=Team,Value="%s" Key=Event,Value="%s"' % (aws_region, elastic_ip['AllocationId'], instance_name, team_name, event))
     filename = "%s-log.txt" % (team_name)
     file = open(filename,"a")
@@ -280,6 +288,7 @@ def create_dns(ec2instance, instance_id, instance_name, team_name, instance):
         AllocationId=(elastic_ip['AllocationId']),
         InstanceId=(instance_id)
     )
+    #create route53 dns record
     route53 = boto3.client('route53')
     dns_record = route53.change_resource_record_sets(
         HostedZoneId=(route53_zone),
@@ -305,39 +314,39 @@ def create_dns(ec2instance, instance_id, instance_name, team_name, instance):
 
 
 def create_team(team_number, team_name):
-        #create team vpc
+    #create team vpc
     vpc = create_vpc(team_number, team_name)
-        #create team internet gateway
+    #create team internet gateway
     ig = create_ig(vpc, team_name)
-        #create vpc peering to interwebs
+    #create vpc peering to interwebs
     vpc_peering = create_vpc_peering(vpc, team_name)
-        #add routes to team route table and tag it
+    #add routes to team route table and tag it
     vpc_route_table = create_vpc_route_table(vpc, vpc_peering, ig, team_name)
-        #add route to interwebs route table
+    #add route to interwebs route table
     cidr = '10.0.%s.0/24' % (team_number)
     add_route(interwebs_rtb, vpc_peering, cidr)
 
     last_octet = 0
 
-            #create subnets
+    #create subnets
     subnet_name_array = (config.items('SUBNETS'))
-        #for each subnet in config.ini [SUBNETS]
+    #for each subnet in config.ini [SUBNETS]
     for i in range(len(subnet_name_array)):
-            #get subnet name
+        #get subnet name
         subnet_name = subnet_name_array[i][1]
         subnet = create_subnet(vpc, team_number, team_name, last_octet, subnet_name, 'a')
-            #get new last octet for cidr
+        #get new last octet for cidr
         last_octet += ip_count
 
-        #create workspaces subnets and directory if used
+    #create workspaces subnets and directory if used
     if workspaces == "true":
         subnet = create_subnet(vpc, team_number, team_name, last_octet, 'Workspaces1', 'a')
         workspaces1_id = subnet.id
-            #get new last octet for cidr
+        #get new last octet for cidr
         last_octet += ip_count
         subnet = create_subnet(vpc, team_number, team_name, last_octet, 'Workspaces2', 'b')
         workspaces2_id = subnet.id
-            #get new last octet for cidr
+        #get new last octet for cidr
         last_octet += ip_count
         create_directory(team_name, vpc, workspaces1_id, workspaces2_id)
 
@@ -349,6 +358,7 @@ def create_team(team_number, team_name):
 
 #main
 team_number = 0
+#create each team based on number if teams from ini
 while team_number <= int(num_teams):
     if team_number < 10:
         team_name = '%s0%s' % (name_teams, team_number)
