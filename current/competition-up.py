@@ -1,4 +1,4 @@
-"""create-vpc.py"""
+"""competition-up.py"""
 
 __author__ = "Kurt Giessel"
 __copyright__ = "Copyright 2019, Highline College"
