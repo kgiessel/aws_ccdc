@@ -16,7 +16,7 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 #database config
-db = MySQLdb.connect('localhost','django','dev!rock','django')
+db = MySQLdb.connect('localhost','django','########','django')
 
 #variables
 
