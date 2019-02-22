@@ -222,9 +222,19 @@ def create_security_group(vpc, team_name):
     #set security group ingress rules
     security_group = gbl_ec2resource.SecurityGroup(security_group['GroupId'])
     security_group.authorize_ingress(
-        CidrIp = '0.0.0.0/0',
+        CidrIp = '172.31.0.0/16',
         IpProtocol = '-1',
         ToPort = -1
+    )
+    security_group.authorize_ingress(
+        CidrIp = '0.0.0.0/0',
+        IpProtocol = 'tcp',
+        ToPort = '3389'
+    )
+    security_group.authorize_ingress(
+        CidrIp = '0.0.0.0/0',
+        IpProtocol = 'tcp',
+        ToPort = '22'
     )
     create_tags(security_group, team_name)
     create_log(team_name, 'Security Group %s' % (team_name), security_group.id)
