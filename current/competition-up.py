@@ -147,6 +147,18 @@ def create_vpc_peering(vpc, team_name):
 
     return vpc_peering
 
+def create_dhcp_set(vpc, team_number, team_name):
+    #create a dhcp option set
+    dhcp_set = gbl_ec2client.create_dhcp_options(DhcpConfigurations=[
+        { 'Key': 'domain-name-servers', 'Values': [ '10.0.%s.10' % (team_number), ], },
+        { 'Key': 'domain-name', 'Values': [ '%s' % (domain), ], }
+    ])
+    #associate dhcp set with vpc
+    vpc.associate_dhcp_options(DhcpOptionsId=dhcp_set['DhcpOptions']['DhcpOptionsId'])
+    os.system('aws ec2 create-tags --region %s --resources %s --tags Key=Name,Value="%s" Key=Team,Value="%s" Key=Event,Value="%s"' % (aws_region, dhcp_set['DhcpOptions']['DhcpOptionsId'], team_name, team_name, event))
+    create_log(team_name, 'DHCP Option Set %s' % (team_name), dhcp_set['DhcpOptions']['DhcpOptionsId'])
+
+
 
 def create_vpc_route_table(vpc, vpc_peering, ig, team_name):
     #get the route table id for the route table attached to the created vpc
@@ -194,7 +206,7 @@ def create_directory(team_name, vpc, workspaces1_id, workspaces2_id):
             ]
         }
     )
-    create_log(team_name, 'Workspace Directory', 'ws.%s.%s' % (team_name, domain), directory["DirectoryId"])
+    create_log(team_name, 'Workspace Directory', 'ws.%s.%s' % (team_name, domain), directory['DirectoryId'])
     create_log(team_name, 'Directory Password', directory_passwd)
 
 
@@ -316,6 +328,8 @@ def create_dns(ec2instance, instance_id, instance_name, team_name, instance):
 def create_team(team_number, team_name):
     #create team vpc
     vpc = create_vpc(team_number, team_name)
+    #create dhcp option set
+    dhcp_set = create_dhcp_set(vpc, team_number, team_name)
     #create team internet gateway
     ig = create_ig(vpc, team_name)
     #create vpc peering to interwebs
@@ -355,7 +369,6 @@ def create_team(team_number, team_name):
     get_instance_config(vpc, team_number, team_name, security_group)
 
 
-
 #main
 team_number = 0
 #create each team based on number if teams from ini
@@ -368,4 +381,4 @@ while team_number <= int(num_teams):
     create_team(team_number, team_name)
     team_number += 1
 
-print('\n%s teams successfully created' % (team_number))
+print('\n%s teams successfully created (including %s00)' % (team_number, name_teams))
