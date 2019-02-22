@@ -12,6 +12,7 @@ import string
 import random
 import os
 import json
+
 config = configparser.ConfigParser()
 config.read('config.ini')
 
@@ -107,7 +108,11 @@ def create_subnet(vpc, team_number, team_name, last_octet, subnet_name, avb_zone
     #create team subnets with appropriate cidr block for class c vpc based on number of subnets needed
     subnet = vpc.create_subnet(CidrBlock='10.0.%s.%s/%s' % (team_number, last_octet, subnet_cidr), AvailabilityZone='%s%s' % (aws_region, avb_zone))
     subnet_tag_name = '%s-%s' % (team_name, subnet_name)
-    create_tags(subnet, subnet_tag_name)
+    tag = resource.create_tags(Tags=[
+        {'Key': 'Name', 'Value': '%s' % (subnet_tag_name)},
+        {'Key': 'Team', 'Value': '%s' % (team_name)},
+        {'Key': 'Event', 'Value': '%s' % (event)}
+    ])
     create_log(team_name, 'Subnet %s-%s' % (team_name, subnet_name), subnet.id)
 
     return subnet
@@ -222,20 +227,23 @@ def create_security_group(vpc, team_name):
     #set security group ingress rules
     security_group = gbl_ec2resource.SecurityGroup(security_group['GroupId'])
     security_group.authorize_ingress(
-        CidrIp = '172.31.0.0/16',
+        CidrIp = (interwebs_cidr),
         IpProtocol = '-1',
         ToPort = -1
     )
-    security_group.authorize_ingress(
-        CidrIp = '0.0.0.0/0',
-        IpProtocol = 'tcp',
-        ToPort = '3389'
-    )
-    security_group.authorize_ingress(
-        CidrIp = '0.0.0.0/0',
-        IpProtocol = 'tcp',
-        ToPort = '22'
-    )
+    if workspaces == "false":
+        security_group.authorize_ingress(
+            CidrIp = '0.0.0.0/0',
+            IpProtocol = 'tcp',
+            FromPort = 3389,
+            ToPort = 3389
+            )
+        security_group.authorize_ingress(
+            CidrIp = '0.0.0.0/0',
+            IpProtocol = 'tcp',
+            FromPort = 22,
+            ToPort = 22
+            )
     create_tags(security_group, team_name)
     create_log(team_name, 'Security Group %s' % (team_name), security_group.id)
 
@@ -272,7 +280,11 @@ def create_instance(team_name, team_number, subnet_id, instance, security_group)
     ec2instance = gbl_ec2resource.Instance(instance_id)
 
     instance_name='%s-%s' % (team_name, instance['name'])
-    create_tags(ec2instance, instance_name)
+    tag = resource.create_tags(Tags=[
+        {'Key': 'Name', 'Value': '%s' % (instance_name)},
+        {'Key': 'Team', 'Value': '%s' % (team_name)},
+        {'Key': 'Event', 'Value': '%s' % (event)}
+    ])
 
     filename = "%s-log.txt" % (team_name)
     file = open(filename,"a")
@@ -291,6 +303,7 @@ def create_instance(team_name, team_number, subnet_id, instance, security_group)
 
     file.writelines('\n')
     file.close()
+
 
 def create_dns(ec2instance, instance_id, instance_name, team_name, instance):
     #create elastic ip and dns
