@@ -159,7 +159,6 @@ def create_dhcp_set(vpc, team_number, team_name):
     create_log(team_name, 'DHCP Option Set %s' % (team_name), dhcp_set['DhcpOptions']['DhcpOptionsId'])
 
 
-
 def create_vpc_route_table(vpc, vpc_peering, ig, team_name):
     #get the route table id for the route table attached to the created vpc
     vpc_route_table = vpc.route_tables.all()
