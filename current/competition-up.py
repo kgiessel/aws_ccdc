@@ -108,7 +108,7 @@ def create_subnet(vpc, team_number, team_name, last_octet, subnet_name, avb_zone
     #create team subnets with appropriate cidr block for class c vpc based on number of subnets needed
     subnet = vpc.create_subnet(CidrBlock='10.0.%s.%s/%s' % (team_number, last_octet, subnet_cidr), AvailabilityZone='%s%s' % (aws_region, avb_zone))
     subnet_tag_name = '%s-%s' % (team_name, subnet_name)
-    tag = resource.create_tags(Tags=[
+    tag = subnet.create_tags(Tags=[
         {'Key': 'Name', 'Value': '%s' % (subnet_tag_name)},
         {'Key': 'Team', 'Value': '%s' % (team_name)},
         {'Key': 'Event', 'Value': '%s' % (event)}
@@ -280,7 +280,7 @@ def create_instance(team_name, team_number, subnet_id, instance, security_group)
     ec2instance = gbl_ec2resource.Instance(instance_id)
 
     instance_name='%s-%s' % (team_name, instance['name'])
-    tag = resource.create_tags(Tags=[
+    tag = ec2instance.create_tags(Tags=[
         {'Key': 'Name', 'Value': '%s' % (instance_name)},
         {'Key': 'Team', 'Value': '%s' % (team_name)},
         {'Key': 'Event', 'Value': '%s' % (event)}

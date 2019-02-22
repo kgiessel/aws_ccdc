@@ -1,56 +1,51 @@
-VPC Team00 - vpc-0d038a8692b9a9f42
+VPC Team00 - vpc-0756516cfd6058f07
 
-DHCP Option Set Team00 - dopt-0ccf4f8ee6969512e
+DHCP Option Set Team00 - dopt-0ba93a7c0332ab8d4
 
-Internet Gateway Team00 - igw-0382a989ab453ee95
+Internet Gateway Team00 - igw-0fceca966d427dfb9
 
-Peering Connection Team00 - pcx-08ff5f7ba2bb4b58a
+Peering Connection Team00 - pcx-0c8811cbad64520e5
 
-Route Table Team00 - rtb-017cb80b78df4d21c
+Route Table Team00 - rtb-0f3edd0c16d0ca85b
 
-Subnet Team00-DOC - subnet-0bb5007ec7a07f7f2
+Subnet Team00-DOC - subnet-03fc1a8e5497f5cf1
 
 Private Key Team00 - -----BEGIN RSA PRIVATE KEY-----
-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
+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
 -----END RSA PRIVATE KEY-----
 
-Security Group Team00 - sg-0685b37fecb0750ba
+Security Group Team00 - sg-0ec5a61e373e21c8c
 
-	Public IP: 35.165.8.153
+	Public IP: 54.149.102.96
 Creating Instance Team00-Confundus
-	on subnet Team00-DOC - subnet-0bb5007ec7a07f7f2
+	on subnet Team00-DOC - subnet-03fc1a8e5497f5cf1
 	IP: 10.0.0.10
 	Type: t2.medium
 
-	Public IP: 35.164.65.150
+	Public IP: 54.148.134.207
 Creating Instance Team00-Imperio
-	on subnet Team00-DOC - subnet-0bb5007ec7a07f7f2
+	on subnet Team00-DOC - subnet-03fc1a8e5497f5cf1
 	IP: 10.0.0.15
 	Type: t2.medium
 
-	Public IP: 35.167.217.16
-Creating Instance Team00-Incarcerous
-	on subnet Team00-DOC - subnet-0bb5007ec7a07f7f2
-	IP: 10.0.0.20
-	Type: t2.micro
-
+	Public IP: 52.42.46.14
