@@ -1,0 +1,72 @@
+VPC Team05 - vpc-05d0b85c7cc062649
+
+DHCP Option Set Team05 - dopt-09ca858afaffda512
+
+Internet Gateway Team05 - igw-0bdded5a0b5108b5e
+
+Peering Connection Team05 - pcx-04e6a5b3ecb78e5e4
+
+Route Table Team05 - rtb-0a8c295f60f8a48d5
+
+Subnet Team05-Workstation - subnet-0f89ce617e920934e
+
+VPC Team05 - vpc-0e9fb3f16d618bf3e
+
+DHCP Option Set Team05 - dopt-054aa8d5d97a43bc2
+
+Internet Gateway Team05 - igw-020185b1eaca818ca
+
+Peering Connection Team05 - pcx-028ee8f9423407ace
+
+Route Table Team05 - rtb-024a8059e136fd142
+
+Subnet Team05-Workstation - subnet-0dad766a34a154a66
+
+VPC Team05 - vpc-0ee938625a9244101
+
+DHCP Option Set Team05 - dopt-0038947e4fe8bb483
+
+Internet Gateway Team05 - igw-06b46a93a661e67f6
+
+Peering Connection Team05 - pcx-02e2bfb863aadd21c
+
+Route Table Team05 - rtb-005090f5ebadef9c5
+
+Subnet Team05-Workstation - subnet-08ea86635142c3b71
+
+Route Table Team05-Nat - rtb-0a6838de87dd2e7ae
+
+Subnet Team05-DMZ - subnet-0a5cde3c5629661a7
+
+Subnet Team05-DOC - subnet-05e185724b430126b
+
+Subnet Team05-Residents - subnet-041429d304ff51fcf
+
+Security Group Team05 - sg-0a6af5fddd0724e09
+
+Security Group Team05 - sg-0d4e909328997f0c9
+
+Private Key Team05 - -----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEAri18mUuAxxZbQ3oHXcb1PnKiRX6k7mShWiy4rZi+XxEnLOCmJuZ7BT0c60G7
+CSs4N7gdyjp1YZDnhcNsqEhcFyEwJCqjIdDa++r1CDNuO1vo4SD7V5Drpmz+JU/AqaxDgitGEIOp
+doAx7k32dMcu8VFEr/TtlLX3e6H+2sFlLhVYZltyVaC3z+aShc07i5seDt0Equ8EvpQllTsdudSd
+L3mlEt+Qbf9R8DelQB4kxT8BkGhQi8atWMLKwbWN3+hb/weof7esXprhsXeAGXVdotmUycdZPkjb
+4U2n+H158QK6c5FbyA+P+A71182mNoIGNfdSSjIa9DtY9VJHD+VC0QIDAQABAoIBAEDTnTRQ7bUr
+lPwgRu2YR17eu5ax9CDmQ0eUrYeu+evYLoR9eFmyHsdsX38QD9TxyRKz7CKAb3/ItuMKQT7A78WM
+DKbpV54WZeqtIFXVDon5Q0vHQsTso0hl+JFahZKhEt83y/QJjOEWBX90dO4x1D7syGvU9TgMIfhZ
+6sjwggAMQfSz0vQj35Pn0G3tLVA4HmPNjBXn+p5gUZpJXTGmnIXWzJSp8/0/jzOf478aaC0DdMR6
++mAtAwHct8WyqIM3Q1AaAz3yz5VE5TyX3Fn/51phky+U4VDs3TXLKS0K4lJ885eoTEzWgD5M894l
+xkmvxmr7d7DDf8djJhbsBBkQUiECgYEA/WG7kPobRFJUp5ZMNKWPolaZmavIp2aj1JFMTmBp77af
+NI4R4sjpoVn8UISYwJx6jWG6veCpaCH/vgALSinwTujOoafrhDYuBRnQ+mqEeu7LNunk2PGZlAvt
+cbLZh7CgpJAuzhsfu/6z3bYx1EkWq+XVpMQtE8Y+c4LcE6Ly+78CgYEAr/o8jpJG3EcASD2ynU1C
+1CytYQ2MdPQ+vLYRqNzx9aH1s6boSZISc9lTr8IBaR58ZVJdUTqcm3Rkk1J5VV15tC2CH1w51ktO
+cPACSF8h57eSod8g4B+IQgMhllKHJ21Pd1HWjBw9sP7XwUg2xGpKhcbAAIR5j8Fk851tmuW4pW8C
+gYBs5ISccLApM4zIHRKRCZnp9Xe7kBUCxFyiLPNzN4Ivj/dpuai8IwYs3qRN4j5XgKg2fIqpsZR8
+eSgUeqZfcBijgO/Uj3rq7fHnJUonZIGc52UUK367MVGES3/2/hr4cpMHRiOnVgbUX0jjfrp5dhO1
+OmgPkHOi7O7H67QzCDOOtwKBgQCNffAu2iIrftMVQrZYkASJwJpvDIvAhZnj9ahhU7UgQObjWfIv
+JUm86CLHkH+924s9lGn/o9bDj2RGp+ty3cO7QVP8jxTZ3pbla7UKJ6OFQi6eBF/UlMXj/cyFpzmQ
+U+2vDJgq85IOu/kSKVQPvT7KLTG3uMxc76yRzCSShN5f9QKBgQC8ChSmRVXUQw2ik5fbPyfLt3vf
++uQ2DkmHrR98uHlK+XasTpF+rZGpwPQxOZMcnbv5FI1JBN0AX9ydAMFTmykn84FU6+og0U/NRGCp
+fZ7C7CwW+vkgWBvnHjRYtnhBxxj5a70DfTLARF1RdG8ctHHMeOuzEEgL9bTtaRoHBUkSmQ==
+-----END RSA PRIVATE KEY-----
+

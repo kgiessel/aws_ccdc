@@ -1,0 +1,48 @@
+VPC Team03 - vpc-0da7a7afb303dab26
+
+DHCP Option Set Team03 - dopt-042d73d6413cbdcf1
+
+Internet Gateway Team03 - igw-039dd2cdaf8013347
+
+Peering Connection Team03 - pcx-00ca2bb502afbb20c
+
+Route Table Team03 - rtb-0e78bd370424a3c7d
+
+Subnet Team03-Workstation - subnet-0baf9158c143dc756
+
+Route Table Team03-Nat - rtb-0d9e5ad59a3e66a13
+
+Subnet Team03-DMZ - subnet-05801ed83ad30b166
+
+Subnet Team03-DOC - subnet-0bbe547f2c502d234
+
+Subnet Team03-Residents - subnet-0c954ed9ef07d6774
+
+Security Group Team03 - sg-0619efc511699d8fd
+
+Security Group Team03 - sg-0fd92c8df17524ade
+
+Private Key Team03 - -----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAsbg3qRNC3dl/XWNHDJZoKzg6nkShOKzPTHWrFr19yl6ce7qvdTpVotECBqIc
+6EFdimKy3tNjNE3BsGv82im6r/f7jLUUgyviyT3WU8sniAefH0HRs4VD9PuB/Q0tB08Z9I/e5xLQ
+1543Ht83JdRcjh3ZclL/eZHqyzWWIlFYoPp6w1MMnBazdcTeJJdbwC6Otl3A/WiNnwvbvWb8Lic5
+AzzUgykVEUTwCkibWEuLPwl2v4Eg9SzcIONyE+pde95koFNUn8ByVt4iCFBAQAjdxEQ2isksaIL7
+8EWXpsxtl20SOiwswMo2Qh2bGJa1p+pmof3GyAXnn0xL0ALprE7euQIDAQABAoIBAF2xiC6sB+mb
+++jJKTD6rqpyd3zvI6wUdymRM4TGm+Wv4YHdlxkPiwxOcmn615CevWjyxehxu3Bcugt/swt1SoXx
+D/5LjSfmYCbGYhNFHG87zWkWMy8YyA4E9q/pXV7oFf/4RYS/R7kVIWw2NAXOookONZBvL17xTb6a
+Xq9zAW3EHypKaCyIXNB736hHEjmVsBq/N9sVpJPuHp4UjrkdCEcS9k8b8oTDMS0Hv4+D6uLCXLaM
+W1TVUirLXr7WnmW9HsxmJN18A1+Q2Wre9mxHYoyhtVlBveAb/OtW5Zfo6jPivRxQgUo6ffCk1o/G
+5L6qbVP1TEbuo2UDLjeBm55rzAECgYEA26NiGuEDNdsy96rNB6VRbV4TPi5GoZ3+fSUqUHBZb2aB
+9uW3ooomG0rW0bPTgTJH2kbmj9AjysO1osQ403NszvmF/vwO10NLRNhJmXCVKl0WMeQ9MXi71qI+
++VtoFaVmQoaVVncvxW6NiDZKNyJXY6/LfLFBe3lwLWZKr8nZITkCgYEAzyRBsBHV4wgF4Kprelb0
+Q7atHCaHg4kemX1xi5wMeZziPlQcbZDSRzpUMqNiM3K8j9xvyU5YVTmpeZ0FpfLfC8/T+KmT41IT
+w63oZaiEbq5rKuXYFoPp7q5EYCssIq5hOj1vc7Nq6n5/chjIoFsnj7Sv2KZ41HlURFQwfHMrKYEC
+gYB4H3RxZOz/kIHgiG6YJudQ3GnD0UVZ8PIVebUZx0hyr+qWoO59G/dZZ+XzTNl5SImZrLs+nkRl
+CgKWIaE+rFsvG7MYULzBKJHK9kvSeotqXvzbjouVOgXpjlTIxiA37nzuF3MnlgnvfdY0UBTo8IRB
+Bg1RhhRdNn6OpeplGA0DqQKBgDZvuc+SsFoMtra3Mq2hAmp1LIM0YPKha2g8/kUJSoH/R7nHkvz8
+TTaozo3MQDdzFLjd3obRzwb+s1oheOWGsTVCddtofVQFMup+3o8wvTT1I3bPln08R5MROyjmz5+B
+ok2S7aJDaXqcqdOLTdZOflQW0QunnCOCizG1ylQ6VAKBAoGBAMn1asdGo4NkiM+uVLaccLi5z4Dg
+h5Ia2sakAn5De/TdI9G/UhFZzxGgvQAJrLdNurJHiDCA9yoJwzlA2+5+X6lYLVMWYbS3DnZwysFh
+/zYcgg3UyiSkKbzKpXD6Zp+XwLys3GDtWjaLCsA+U0zS0IVE8Qmgi1aPcXn7oScqFmIp
+-----END RSA PRIVATE KEY-----
+
